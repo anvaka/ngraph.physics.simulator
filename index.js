@@ -19,6 +19,13 @@ module.exports = function () {
       return integrate(bodies, timeStep);
     },
 
+    /**
+     * Adds body to the system
+     *
+     * @param {ngraph.physics.primitives.Body} body physical body
+     *
+     * @returns {ngraph.physics.primitives.Body} added body
+     */
     addBody: function (body) {
       if (!body) {
         throw new Error('Body is required');
