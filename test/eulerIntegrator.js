@@ -47,3 +47,15 @@ test('Body does not move faster than 1px', function (t) {
 
   t.end();
 });
+
+test('Can get total system movement', function (t) {
+  var body = new physics.Body();
+  var timeStep = 1;
+  body.mass = 1; body.velocity.x = 0.2;
+
+  var movement = integrate([body], timeStep);
+  // to improve performance, integrator does not take square root, thus
+  // total movement is .2 * .2 = 0.04;
+  t.ok(0.04 <= movement && movement <= 0.041, 'System should travel by 0.2 pixels');
+  t.end();
+});
