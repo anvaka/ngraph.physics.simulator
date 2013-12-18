@@ -16,6 +16,7 @@
     "url": "https://github.com/anvaka/ngraph.physics.simulator"
   },
   "dependencies": {
-    "ngraph.physics.primitives": "0.0.3"
+    "ngraph.physics.primitives": "0.0.3",
+    "ngraph.quadtreebh": "0.0.1"
   }
 }

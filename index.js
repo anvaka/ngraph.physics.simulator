@@ -3,20 +3,36 @@
  */
 module.exports = function () {
   var integrate = require('./lib/eulerIntegrator');
+  var createQuadTree = require('ngraph.quadtreebh');
 
   var bodies = [], // Bodies in this simulation.
-      springs = []; // Springs in this simulation.
+      springs = [], // Springs in this simulation.
+      quadTree = createQuadTree();
 
   return {
+    /**
+     * Array of bodies, registered with current simulator
+     *
+     * Note: To add new body, use addBody() method. This property is only
+     * exposed for testing/performance purposes.
+     */
+    bodies: bodies,
+
     /**
      * Performs one step of force simulation.
      * @param {Number} timeStep - integration step
      *
-     * @returns {Number} total distance traveled by bodies/total # of bodies
+     * @returns {Number} Total movement of the system. Calculated as:
+     *   (total distance traveled by bodies)^2/(total # of bodies)
      */
     step: function (timeStep) {
-      accumulateForces();
-      return integrate(bodies, timeStep);
+      // I'm reluctant to check timeStep here, since this method is going to be
+      // super hot, I don't want to add more complexity to it
+      if (bodies.length) {
+        accumulateForces();
+        return integrate(bodies, timeStep);
+      }
+      return 0;
     },
 
     /**
@@ -37,6 +53,18 @@ module.exports = function () {
   };
 
   function accumulateForces() {
+    quadTree.insertBodies(bodies); // performance: O(n * log n)
+    // Accumulate forces acting on bodies.
+    var body,
+        i = bodies.length;
+    while (i--) {
+      body = bodies[i];
+      body.force.x = 0;
+      body.force.y = 0;
 
+      quadTree.updateBodyForce(body);
+      // todo: drag force
+    }
+    // todo: springs
   }
 };
