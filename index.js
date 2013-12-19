@@ -4,13 +4,16 @@
 module.exports = physicsSimulator;
 
 function physicsSimulator() {
-  var integrate = require('./lib/eulerIntegrator');
+  var Spring = require('./lib/spring');
   var createQuadTree = require('ngraph.quadtreebh');
   var createDragForce = require('./lib/dragForce');
+  var createSpringForce = require('./lib/springForce');
+  var integrate = require('./lib/eulerIntegrator');
 
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
       quadTree = createQuadTree(),
+      springForce = createSpringForce(),
       dragForce = createDragForce();
 
   return {
@@ -53,7 +56,27 @@ function physicsSimulator() {
       bodies.push(body);
 
       return body;
-    }
+    },
+
+    /**
+     * Adds a spring to this simulation.
+     */
+    addSpring: function (body1, body2, springLength, springWeight, springCoefficient) {
+      if (!body1 || !body2) {
+        throw new Error('Cannot add null spring to force simulator');
+      }
+
+      if (typeof springLength !== 'number') {
+        throw new Error('Spring length should be a number');
+      }
+      springWeight = typeof springWeight === 'number' ? springWeight : 1;
+
+      var spring = new Spring(body1, body2, springLength, springCoefficient >= 0 ? springCoefficient : -1, springWeight);
+      springs.push(spring);
+
+      // TODO: could mark simulator as dirty.
+      return spring;
+    },
   };
 
   function accumulateForces() {
@@ -69,6 +92,9 @@ function physicsSimulator() {
       quadTree.updateBodyForce(body);
       dragForce.update(body);
     }
-    // todo: springs
+    i = springs.length;
+    while(i--) {
+      springForce.update(springs[i]);
+    }
   }
 };
