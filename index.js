@@ -1,13 +1,17 @@
 /**
  * Manages a simulation of physical forces acting on bodies and springs.
  */
-module.exports = function () {
+module.exports = physicsSimulator;
+
+function physicsSimulator() {
   var integrate = require('./lib/eulerIntegrator');
   var createQuadTree = require('ngraph.quadtreebh');
+  var createDragForce = require('./lib/dragForce');
 
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
-      quadTree = createQuadTree();
+      quadTree = createQuadTree(),
+      dragForce = createDragForce();
 
   return {
     /**
@@ -63,7 +67,7 @@ module.exports = function () {
       body.force.y = 0;
 
       quadTree.updateBodyForce(body);
-      // todo: drag force
+      dragForce.update(body);
     }
     // todo: springs
   }
