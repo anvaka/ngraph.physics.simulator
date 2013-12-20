@@ -22,6 +22,18 @@ test('Does not update position of one body', function (t) {
   t.end();
 });
 
+test('Can remove bodies', function (t) {
+  var simulator = createSimulator();
+  var body = new physics.Body(0, 0);
+  simulator.addBody(body);
+  t.equals(simulator.bodies.length, 1, 'Number of bodies is 1');
+  var result = simulator.removeBody(body);
+  t.equals(result, true, 'body succesfully removed');
+  t.equals(simulator.bodies.length, 0, 'Number of bodies is 0');
+  t.end();
+});
+
+
 test('Updates position for two bodies', function (t) {
   var simulator = createSimulator();
   var body1 = new physics.Body(-1, 0);
@@ -64,6 +76,23 @@ test('Spring affects bodies positions', function (t) {
 
   t.ok(body1.pos.x > -10, 'Body 1 should move towards body 2');
   t.ok(body2.pos.x < 10, 'Body 2 should move towards body 1');
+
+  t.end();
+});
+
+test('Can remove springs', function (t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(-10, 0);
+  var body2 = new physics.Body(10, 0);
+  simulator.addBody(body1);
+  simulator.addBody(body2);
+  var spring = simulator.addSpring(body1, body2, 1);
+  simulator.removeSpring(spring);
+
+  simulator.step(1);
+
+  t.ok(body1.pos.x < -10, 'Body 1 should move away from body 2');
+  t.ok(body2.pos.x > 10, 'Body 2 should move away from body 1');
 
   t.end();
 });

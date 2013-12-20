@@ -56,7 +56,26 @@ function physicsSimulator() {
     },
 
     /**
+     * Removes body from the system
+     *
+     * @param {ngraph.physics.primitives.Body} body to remove
+     *
+     * @returns {Boolean} true if body found and removed. falsy otherwise;
+     */
+    removeBody: function (body) {
+      if (!body) { return; }
+      var idx = bodies.indexOf(body);
+      if (idx > -1) {
+        bodies.splice(idx, 1);
+        return true;
+      }
+    },
+
+    /**
      * Adds a spring to this simulation.
+     *
+     * @returns {Object} - a handle for a spring. If you want to later remove
+     * spring pass it to removeSpring() method.
      */
     addSpring: function (body1, body2, springLength, springWeight, springCoefficient) {
       if (!body1 || !body2) {
@@ -73,6 +92,22 @@ function physicsSimulator() {
       // TODO: could mark simulator as dirty.
       return spring;
     },
+
+    /**
+     * Removes spring from the system
+     *
+     * @param {Object} spring to remove. Spring is an object returned by addSpring
+     *
+     * @returns {Boolean} true if spring found and removed. falsy otherwise;
+     */
+    removeSpring: function (spring) {
+      if (!spring) { return; }
+      var idx = springs.indexOf(spring);
+      if (idx > -1) {
+        springs.splice(idx, 1);
+        return true;
+      }
+    }
   };
 
   function accumulateForces() {
