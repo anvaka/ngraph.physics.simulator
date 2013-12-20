@@ -38,3 +38,32 @@ test('Updates position for two bodies', function (t) {
   t.equals(body2.pos.y, 0, 'Body2.Y has not changed');
   t.end();
 });
+
+test('add spring should not add bodies', function (t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(-1, 0);
+  var body2 = new physics.Body(1, 0);
+
+  simulator.addSpring(body1, body2, 10);
+
+  t.equals(simulator.bodies.length, 0, 'Should not add two bodies');
+  t.equals(simulator.bodies.length, 0, 'Should not add two bodies');
+  t.end();
+});
+
+test('Spring affects bodies positions', function (t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(-10, 0);
+  var body2 = new physics.Body(10, 0);
+  simulator.addBody(body1);
+  simulator.addBody(body2);
+  // If you take this out, bodies will repel each other:
+  simulator.addSpring(body1, body2, 1);
+
+  simulator.step(1);
+
+  t.ok(body1.pos.x > -10, 'Body 1 should move towards body 2');
+  t.ok(body2.pos.x < 10, 'Body 2 should move towards body 1');
+
+  t.end();
+});

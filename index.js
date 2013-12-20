@@ -35,11 +35,8 @@ function physicsSimulator() {
     step: function (timeStep) {
       // I'm reluctant to check timeStep here, since this method is going to be
       // super hot, I don't want to add more complexity to it
-      if (bodies.length) {
-        accumulateForces();
-        return integrate(bodies, timeStep);
-      }
-      return 0;
+      accumulateForces();
+      return integrate(bodies, timeStep);
     },
 
     /**
@@ -79,18 +76,23 @@ function physicsSimulator() {
   };
 
   function accumulateForces() {
-    quadTree.insertBodies(bodies); // performance: O(n * log n)
     // Accumulate forces acting on bodies.
     var body,
         i = bodies.length;
-    while (i--) {
-      body = bodies[i];
-      body.force.x = 0;
-      body.force.y = 0;
 
-      quadTree.updateBodyForce(body);
-      dragForce.update(body);
+    if (i) {
+      // only add bodies if there the array is not empty:
+      quadTree.insertBodies(bodies); // performance: O(n * log n)
+      while (i--) {
+        body = bodies[i];
+        body.force.x = 0;
+        body.force.y = 0;
+
+        quadTree.updateBodyForce(body);
+        dragForce.update(body);
+      }
     }
+
     i = springs.length;
     while(i--) {
       springForce.update(springs[i]);
