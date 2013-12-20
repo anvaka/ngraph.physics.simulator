@@ -69,7 +69,6 @@ function physicsSimulator() {
       if (typeof springLength !== 'number') {
         throw new Error('Spring length should be a number');
       }
-      springWeight = typeof springWeight === 'number' ? springWeight : 1;
 
       var spring = new Spring(body1, body2, springLength, springCoefficient >= 0 ? springCoefficient : -1, springWeight);
       springs.push(spring);
