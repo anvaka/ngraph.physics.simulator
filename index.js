@@ -54,7 +54,7 @@ function physicsSimulator(settings) {
       springForce = createSpringForce(),
       dragForce = createDragForce();
 
-  return {
+  var publicApi = {
     /**
      * Array of bodies, registered with current simulator
      *
@@ -144,8 +144,41 @@ function physicsSimulator(settings) {
         springs.splice(idx, 1);
         return true;
       }
+    },
+
+    // expose api to change simulator settings:
+    springLength: function (value) {
+      if (value !== undefined) {
+        settings.springLength = value;
+      }
     }
-  };
+  }
+
+  exposeSettings(publicApi);
+
+  return publicApi;
+
+  /**
+   * Augment our public API with setting accessor/modifier methods
+   * Each setting in the 'settings' object gets identical function name on the
+   * publicly exposed API
+   *
+   * E.g. simulator.springLength() will return current settings.springLength
+   * and simulator.springLength(20) will set current spring length to 20
+   */
+  function exposeSettings(target) {
+    for (var key in settings) {
+      if (settings.hasOwnProperty(key)) {
+        target[key] = function (value) {
+          if (value !== undefined) {
+            settings[key] = value;
+            return target;
+          }
+          return settings[key];
+        }
+      }
+    }
+  }
 
   function accumulateForces() {
     // Accumulate forces acting on bodies.
