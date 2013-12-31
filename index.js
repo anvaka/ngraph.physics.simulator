@@ -144,13 +144,6 @@ function physicsSimulator(settings) {
         springs.splice(idx, 1);
         return true;
       }
-    },
-
-    // expose api to change simulator settings:
-    springLength: function (value) {
-      if (value !== undefined) {
-        settings.springLength = value;
-      }
     }
   }
 
