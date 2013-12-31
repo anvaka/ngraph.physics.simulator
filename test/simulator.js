@@ -22,6 +22,53 @@ test('Does not update position of one body', function (t) {
   t.end();
 });
 
+test('Can configure foorces', function (t) {
+  t.test('Gravity', function (t) {
+    var simulator = createSimulator();
+    var body1 = new physics.Body(0, 0);
+    var body2 = new physics.Body(1, 0);
+
+    simulator.addBody(body1);
+    simulator.addBody(body2);
+
+    simulator.step();
+    // by default gravity is negative, bodies should repel each other:
+    var x1 = body1.pos.x;
+    var x2 = body2.pos.x;
+    t.ok(x1 < 0, 'Body 1 moves away from body 2');
+    t.ok(x2 > 1, 'Body 2 moves away from body 1');
+
+    // now reverse gravity, and bodies should attract each other:
+    simulator.gravity(100);
+    simulator.step();
+    t.ok(body1.pos.x > x1, 'Body 1 moved towards body 2');
+    t.ok(body2.pos.x < x2, 'Body 2 moved towards body 1');
+
+    t.end();
+  });
+
+  t.test('Drag', function (t) {
+    var simulator = createSimulator();
+    var body1 = new physics.Body(0, 0);
+    body1.velocity.x = -1; // give it small impulse
+    simulator.addBody(body1);
+
+    simulator.step();
+
+    var x1 = body1.velocity.x;
+    // by defauld drag force will slow down entire system:
+    t.ok(x1 > -1, 'Body 1 moves at reduced speed');
+
+    // Restore original velocity, but now set drag force to 0
+    body1.velocity.x = -1;
+    simulator.dragCoeff(0)
+    simulator.step();
+    t.ok(body1.velocity.x === -1, 'Velocity should remain unchanged');
+    t.end();
+  });
+  t.end();
+});
+
 test('Can remove bodies', function (t) {
   var simulator = createSimulator();
   var body = new physics.Body(0, 0);
@@ -32,7 +79,6 @@ test('Can remove bodies', function (t) {
   t.equals(simulator.bodies.length, 0, 'Number of bodies is 0');
   t.end();
 });
-
 
 test('Updates position for two bodies', function (t) {
   var simulator = createSimulator();

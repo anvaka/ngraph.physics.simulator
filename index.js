@@ -51,9 +51,9 @@ function physicsSimulator(settings) {
 
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
-      quadTree = createQuadTree(),
-      springForce = createSpringForce(),
-      dragForce = createDragForce();
+      quadTree = createQuadTree(settings),
+      springForce = createSpringForce(settings),
+      dragForce = createDragForce(settings);
 
   var publicApi = {
     /**
@@ -144,6 +144,26 @@ function physicsSimulator(settings) {
       if (idx > -1) {
         springs.splice(idx, 1);
         return true;
+      }
+    },
+
+    gravity: function (value) {
+      if (value !== undefined) {
+        settings.gravity = value;
+        quadTree.options({gravity: value});
+        return this;
+      } else {
+        return settings.gravity;
+      }
+    },
+
+    theta: function (value) {
+      if (value !== undefined) {
+        settings.theta = value;
+        quadTree.options({theta: value});
+        return this;
+      } else {
+        return settings.theta;
       }
     }
   }
