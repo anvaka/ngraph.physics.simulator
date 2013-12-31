@@ -9,6 +9,7 @@ function physicsSimulator(settings) {
   var createDragForce = require('./lib/dragForce');
   var createSpringForce = require('./lib/springForce');
   var integrate = require('./lib/eulerIntegrator');
+  var expose = require('./lib/exposeProperties');
   var merge = require('ngraph.merge');
 
   settings = merge(settings, {
@@ -147,31 +148,10 @@ function physicsSimulator(settings) {
     }
   }
 
-  exposeSettings(publicApi);
+  // allow settings modification via public API:
+  expose(settings, publicApi);
 
   return publicApi;
-
-  /**
-   * Augment our public API with setting accessor/modifier methods
-   * Each setting in the 'settings' object gets identical function name on the
-   * publicly exposed API
-   *
-   * E.g. simulator.springLength() will return current settings.springLength
-   * and simulator.springLength(20) will set current spring length to 20
-   */
-  function exposeSettings(target) {
-    for (var key in settings) {
-      if (settings.hasOwnProperty(key)) {
-        target[key] = function (value) {
-          if (value !== undefined) {
-            settings[key] = value;
-            return target;
-          }
-          return settings[key];
-        }
-      }
-    }
-  }
 
   function accumulateForces() {
     // Accumulate forces acting on bodies.
