@@ -18,6 +18,7 @@
   "dependencies": {
     "ngraph.physics.primitives": "0.0.3",
     "ngraph.quadtreebh": "0.0.1",
-    "ngraph.random": "0.0.1"
+    "ngraph.random": "0.0.1",
+    "ngraph.merge": "0.0.1"
   }
 }
