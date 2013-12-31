@@ -6,10 +6,27 @@ var test = require('tap').test,
 
 test('Initialized with default value', function (t) {
   var springForce = createSpringForce();
-  var defaults = springForce.options();
-  t.ok(defaults && typeof defaults.coeff === 'number' 
-       && typeof defaults.length === 'number', 'Default value is present');
+  var springCoeff = springForce.springCoeff();
+  var springLength = springForce.springLength();
 
+  t.ok(typeof springCoeff === 'number' && typeof springLength === 'number', 'Default values are present');
+
+  t.end();
+});
+
+
+test('Should bump bodies at same position', function (t) { 
+  var body1 = new Body(0, 0);
+  var body2 = new Body(0, 0);
+  // length between two bodies is 2, while ideal length is 1. Each body
+  // should start moving towards each other after force update
+  var idealLength = 1;
+  var spring = new Spring(body1, body2, idealLength);
+  var springForce = createSpringForce();
+  springForce.update(spring);
+
+  t.ok(body1.force.x > 0, 'Body 1 should go right');
+  t.ok(body2.force.x < 0, 'Body 2 should go left');
   t.end();
 });
 
