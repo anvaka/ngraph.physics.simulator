@@ -33,6 +33,17 @@ test('exposes only filtered properies whith filter', function (t) {
   t.end();
 });
 
+test('Ignores when function is present', function (t) {
+  var predefinedSetter = function () {},
+      target = { name : predefinedSetter },
+      settings = { name: 'John' };
+
+  expose(settings, target);
+
+  t.ok(target.name === predefinedSetter, 'name() should not be overriden');
+  t.end();
+});
+
 test('Ignores prototype', function (t) {
   function Settings() {};
   Settings.prototype.foo = 'Bar';
