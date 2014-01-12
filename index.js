@@ -16,12 +16,12 @@ function physicsSimulator(settings) {
       /**
        * Ideal length for links (springs in physical model).
        */
-      springLength: 80,
+      springLength: 30,
 
       /**
        * Hook's law coefficient. 1 - solid spring.
        */
-      springCoeff: 0.0002,
+      springCoeff: 0.0008,
 
       /**
        * Coulomb's law coefficient. It's used to repel nodes thus should be negative
