@@ -51,6 +51,7 @@ function physicsSimulator(settings) {
 
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
+      boundingBox =  { x1: 0, y1: 0, x2: 0, y2: 0 },
       quadTree = createQuadTree(settings),
       springForce = createSpringForce(settings),
       dragForce = createDragForce(settings);
@@ -72,9 +73,13 @@ function physicsSimulator(settings) {
      */
     step: function () {
       // I'm reluctant to check timeStep here, since this method is going to be
-      // super hot, I don't want to add more complexity to it
+      // super hot. Don't want to add more complexity to it
       accumulateForces();
-      return integrate(bodies, settings.timeStep);
+      var totalMovement = integrate(bodies, settings.timeStep);
+
+      updateBoundingBox();
+
+      return totalMovement;
     },
 
     /**
@@ -102,11 +107,16 @@ function physicsSimulator(settings) {
      */
     removeBody: function (body) {
       if (!body) { return; }
+
       var idx = bodies.indexOf(body);
-      if (idx > -1) {
-        bodies.splice(idx, 1);
-        return true;
+      if (idx < 0) { return; }
+
+      bodies.splice(idx, 1);
+      if (bodies.length === 0) {
+        boundingBox.x1 = boundingBox.y1 = 0;
+        boundingBox.x2 = boundingBox.y2 = 0;
       }
+      return true;
     },
 
     /**
@@ -147,6 +157,13 @@ function physicsSimulator(settings) {
       }
     },
 
+    /**
+     * Returns bounding box which covers all bodies
+     */
+    getBBox: function () {
+      return boundingBox;
+    },
+
     gravity: function (value) {
       if (value !== undefined) {
         settings.gravity = value;
@@ -172,6 +189,46 @@ function physicsSimulator(settings) {
   expose(settings, publicApi);
 
   return publicApi;
+
+  function updateBoundingBox() {
+    var i = bodies.length;
+    if (i === 0) { return; } // don't have to wory here.
+
+    var x1 = Number.MAX_VALUE,
+        y1 = Number.MAX_VALUE,
+        x2 = Number.MIN_VALUE,
+        y2 = Number.MIN_VALUE;
+
+    while(i--) {
+      // this is O(n), could it be done faster with quadtree?
+      // how about pinned nodes?
+      var body = bodies[i];
+      if (body.isPinned) {
+        body.pos.x = body.prevPos.x;
+        body.pos.y = body.prevPos.y;
+      } else {
+        body.prevPos.x = body.pos.x;
+        body.prevPos.y = body.pos.y;
+      }
+      if (body.pos.x < x1) {
+        x1 = body.pos.x;
+      }
+      if (body.pos.x > x2) {
+        x2 = body.pos.x;
+      }
+      if (body.pos.y < y1) {
+        y1 = body.pos.y;
+      }
+      if (body.pos.y > y2) {
+        y2 = body.pos.y;
+      }
+    }
+
+    boundingBox.x1 = x1;
+    boundingBox.x2 = x2;
+    boundingBox.y1 = y1;
+    boundingBox.y2 = y2;
+  }
 
   function accumulateForces() {
     // Accumulate forces acting on bodies.
