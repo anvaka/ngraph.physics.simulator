@@ -51,6 +51,7 @@ function physicsSimulator(settings) {
   var createDragForce = settings.createDragForce || require('./lib/dragForce');
   var createSpringForce = settings.createSpringForce || require('./lib/springForce');
   var integrate = settings.integrator || require('./lib/eulerIntegrator');
+  var createBody = settings.createBody || require('./lib/createBody');
 
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
@@ -94,6 +95,23 @@ function physicsSimulator(settings) {
       if (!body) {
         throw new Error('Body is required');
       }
+      bodies.push(body);
+
+      return body;
+    },
+
+    /**
+     * Adds body to the system at given position
+     *
+     * @param {Object} pos position of a body
+     *
+     * @returns {ngraph.physics.primitives.Body} added body
+     */
+    addBodyAt: function (pos) {
+      if (!pos) {
+        throw new Error('Body position is required');
+      }
+      var body = createBody(pos);
       bodies.push(body);
 
       return body;
