@@ -6,12 +6,12 @@ module.exports = physicsSimulator;
 function physicsSimulator(settings) {
   var Spring = require('./lib/spring');
   var createQuadTree = require('ngraph.quadtreebh');
+  var createBounds = require('./lib/bounds');
   var createDragForce = require('./lib/dragForce');
   var createSpringForce = require('./lib/springForce');
   var integrate = require('./lib/eulerIntegrator');
   var expose = require('ngraph.expose');
   var merge = require('ngraph.merge');
-  var random = require('ngraph.random').random(42);
 
   settings = merge(settings, {
       /**
@@ -52,8 +52,8 @@ function physicsSimulator(settings) {
 
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
-      boundingBox =  { x1: 0, y1: 0, x2: 0, y2: 0 },
       quadTree = createQuadTree(settings),
+      bounds = createBounds(bodies, settings),
       springForce = createSpringForce(settings),
       dragForce = createDragForce(settings);
 
@@ -73,12 +73,10 @@ function physicsSimulator(settings) {
      *   (total distance traveled by bodies)^2/(total # of bodies)
      */
     step: function () {
-      // I'm reluctant to check timeStep here, since this method is going to be
-      // super hot. Don't want to add more complexity to it
       accumulateForces();
       var totalMovement = integrate(bodies, settings.timeStep);
 
-      updateBoundingBox();
+      bounds.update();
 
       return totalMovement;
     },
@@ -114,8 +112,7 @@ function physicsSimulator(settings) {
 
       bodies.splice(idx, 1);
       if (bodies.length === 0) {
-        boundingBox.x1 = boundingBox.y1 = 0;
-        boundingBox.x2 = boundingBox.y2 = 0;
+        bounds.reset();
       }
       return true;
     },
@@ -159,35 +156,14 @@ function physicsSimulator(settings) {
     },
 
     getBestNewBodyPosition: function (neighbors) {
-      var graphRect = boundingBox;
-
-      var baseX = 0, baseY = 0;
-
-      if (neighbors.length) {
-        for (var i = 0; i < neighbors.length; ++i) {
-          baseX += neighbors[i].pos.x;
-          baseY += neighbors[i].pos.y;
-        }
-
-        baseX /= neighbors.length;
-        baseY /= neighbors.length;
-      } else {
-        baseX = (graphRect.x1 + graphRect.x2) / 2;
-        baseY = (graphRect.y1 + graphRect.y2) / 2;
-      }
-
-      var springLength = settings.springLength;
-      return {
-        x: baseX + random.next(springLength) - springLength / 2,
-        y: baseY + random.next(springLength) - springLength / 2
-      };
+      return bounds.getBestNewPosition(neighbors);
     },
 
     /**
      * Returns bounding box which covers all bodies
      */
     getBBox: function () {
-      return boundingBox;
+      return bounds.box;
     },
 
     gravity: function (value) {
@@ -215,46 +191,6 @@ function physicsSimulator(settings) {
   expose(settings, publicApi);
 
   return publicApi;
-
-  function updateBoundingBox() {
-    var i = bodies.length;
-    if (i === 0) { return; } // don't have to wory here.
-
-    var x1 = Number.MAX_VALUE,
-        y1 = Number.MAX_VALUE,
-        x2 = Number.MIN_VALUE,
-        y2 = Number.MIN_VALUE;
-
-    while(i--) {
-      // this is O(n), could it be done faster with quadtree?
-      // how about pinned nodes?
-      var body = bodies[i];
-      if (body.isPinned) {
-        body.pos.x = body.prevPos.x;
-        body.pos.y = body.prevPos.y;
-      } else {
-        body.prevPos.x = body.pos.x;
-        body.prevPos.y = body.pos.y;
-      }
-      if (body.pos.x < x1) {
-        x1 = body.pos.x;
-      }
-      if (body.pos.x > x2) {
-        x2 = body.pos.x;
-      }
-      if (body.pos.y < y1) {
-        y1 = body.pos.y;
-      }
-      if (body.pos.y > y2) {
-        y2 = body.pos.y;
-      }
-    }
-
-    boundingBox.x1 = x1;
-    boundingBox.x2 = x2;
-    boundingBox.y1 = y1;
-    boundingBox.y2 = y2;
-  }
 
   function accumulateForces() {
     // Accumulate forces acting on bodies.
