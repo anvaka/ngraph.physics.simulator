@@ -9,7 +9,7 @@ function physicsSimulator(settings) {
   var createDragForce = require('./lib/dragForce');
   var createSpringForce = require('./lib/springForce');
   var integrate = require('./lib/eulerIntegrator');
-  var expose = require('./lib/exposeProperties');
+  var expose = require('ngraph.expose');
   var merge = require('ngraph.merge');
 
   settings = merge(settings, {
@@ -183,8 +183,7 @@ function physicsSimulator(settings) {
       quadTree.insertBodies(bodies); // performance: O(n * log n)
       while (i--) {
         body = bodies[i];
-        body.force.x = 0;
-        body.force.y = 0;
+        body.force.reset();
 
         quadTree.updateBodyForce(body);
         dragForce.update(body);
