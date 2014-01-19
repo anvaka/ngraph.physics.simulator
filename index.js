@@ -11,6 +11,7 @@ function physicsSimulator(settings) {
   var integrate = require('./lib/eulerIntegrator');
   var expose = require('ngraph.expose');
   var merge = require('ngraph.merge');
+  var random = require('ngraph.random').random(42);
 
   settings = merge(settings, {
       /**
@@ -155,6 +156,31 @@ function physicsSimulator(settings) {
         springs.splice(idx, 1);
         return true;
       }
+    },
+
+    getBestNewBodyPosition: function (neighbors) {
+      var graphRect = boundingBox;
+
+      var baseX = 0, baseY = 0;
+
+      if (neighbors.length) {
+        for (var i = 0; i < neighbors.length; ++i) {
+          baseX += neighbors[i].pos.x;
+          baseY += neighbors[i].pos.y;
+        }
+
+        baseX /= neighbors.length;
+        baseY /= neighbors.length;
+      } else {
+        baseX = (graphRect.x1 + graphRect.x2) / 2;
+        baseY = (graphRect.y1 + graphRect.y2) / 2;
+      }
+
+      var springLength = settings.springLength;
+      return {
+        x: baseX + random.next(springLength) - springLength / 2,
+        y: baseY + random.next(springLength) - springLength / 2
+      };
     },
 
     /**

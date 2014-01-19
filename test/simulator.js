@@ -142,3 +142,31 @@ test('Can remove springs', function (t) {
 
   t.end();
 });
+
+test('Get bounding box', function (t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(0, 0);
+  var body2 = new physics.Body(10, 10);
+  simulator.addBody(body1);
+  simulator.addBody(body2);
+  simulator.step(); // this will move bodies farther away
+  var bbox = simulator.getBBox();
+  t.ok(bbox.x1 <= 0, 'Left is 0');
+  t.ok(bbox.y1 <= 0, 'Top is 0');
+  t.ok(bbox.x2 >= 10, 'right is 10');
+  t.ok(bbox.y2 >= 10, 'bottom is 10');
+  t.end();
+});
+
+test('Get best position', function (t) {
+  t.test('can get with empty simulator', function (t) {
+    var simulator = createSimulator();
+    var empty = simulator.getBestNewBodyPosition([]);
+    t.ok(typeof empty.x === 'number', 'Has X');
+    t.ok(typeof empty.y === 'number', 'Has Y');
+
+    t.end();
+  });
+
+  t.end();
+});
