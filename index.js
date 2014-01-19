@@ -5,11 +5,6 @@ module.exports = physicsSimulator;
 
 function physicsSimulator(settings) {
   var Spring = require('./lib/spring');
-  var createQuadTree = require('ngraph.quadtreebh');
-  var createBounds = require('./lib/bounds');
-  var createDragForce = require('./lib/dragForce');
-  var createSpringForce = require('./lib/springForce');
-  var integrate = require('./lib/eulerIntegrator');
   var expose = require('ngraph.expose');
   var merge = require('ngraph.merge');
 
@@ -50,9 +45,16 @@ function physicsSimulator(settings) {
       timeStep : 20
   });
 
+  // We allow clients to override basic factory methods:
+  var createQuadTree = settings.createQuadTree || require('ngraph.quadtreebh');
+  var createBounds = settings.createBounds || require('./lib/bounds');
+  var createDragForce = settings.createDragForce || require('./lib/dragForce');
+  var createSpringForce = settings.createSpringForce || require('./lib/springForce');
+  var integrate = settings.integrator || require('./lib/eulerIntegrator');
+
   var bodies = [], // Bodies in this simulation.
       springs = [], // Springs in this simulation.
-      quadTree = createQuadTree(settings),
+      quadTree =  createQuadTree(settings),
       bounds = createBounds(bodies, settings),
       springForce = createSpringForce(settings),
       dragForce = createDragForce(settings);
