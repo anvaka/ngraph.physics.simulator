@@ -12,6 +12,22 @@ Body forces are calculated in `n*lg(n)` time with help of Barnes-Hut algorithm i
 
 [![build status](https://secure.travis-ci.org/anvaka/ngraph.physics.simulator.png)](http://travis-ci.org/anvaka/ngraph.physics.simulator)
 
+# quickstart
+
+``` js
+var physics = require('ngraph.physics.primitives');
+var body1 = new physics.Body(0, 0);
+var body2 = new physics.Body(1, 0);
+
+var simulator = require('ngraph.physics.simulator');
+simulator.addBody(body1);
+simulator.addBody(body2);
+
+simulator.step();
+```
+
+This will move apart two bodies.
+
 # install
 
 With [npm](https://npmjs.org) do:
@@ -19,6 +35,10 @@ With [npm](https://npmjs.org) do:
 ```
 npm install ngraph.physics.simulator
 ```
+
+# todo
+
+I spent countless hours trying to optimize performance of this module but it's not perfect. Ideally I'd love to use native arrays to simulate physics. Eventually this will allow to calculate forces on video card or via webworkers.
 
 # license
 
