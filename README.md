@@ -28,6 +28,8 @@ simulator.step();
 
 This will move apart two bodies.
 
+For more advanced use cases, please look inside `index.js`, which includes documentation for public API and describes engine configuration properties.
+
 # install
 
 With [npm](https://npmjs.org) do:
