@@ -26,7 +26,7 @@ function physicsSimulator(settings) {
       gravity: -1.2,
 
       /**
-       * Theta coeffiecient from Barnes Hut simulation. Ranged between (0, 1).
+       * Theta coefficient from Barnes Hut simulation. Ranged between (0, 1).
        * The closer it's to 1 the more nodes algorithm will have to go through.
        * Setting it to one makes Barnes Hut simulation no different from
        * brute-force forces calculation (each node is considered).
