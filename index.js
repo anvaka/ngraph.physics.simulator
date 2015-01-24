@@ -42,7 +42,12 @@ function physicsSimulator(settings) {
       /**
        * Default time step (dt) for forces integration
        */
-      timeStep : 20
+      timeStep : 20,
+
+      /**
+        * Maximum movement of the system which can be considered as stabilized
+        */
+      stableThreshold: 0.009
   });
 
   // We allow clients to override basic factory methods:
@@ -72,8 +77,7 @@ function physicsSimulator(settings) {
     /**
      * Performs one step of force simulation.
      *
-     * @returns {Number} Total movement of the system. Calculated as:
-     *   (total distance traveled by bodies)^2/(total # of bodies)
+     * @returns {boolean} true if system is considered stable; False otherwise.
      */
     step: function () {
       accumulateForces();
@@ -81,7 +85,7 @@ function physicsSimulator(settings) {
 
       bounds.update();
 
-      return totalMovement;
+      return totalMovement < settings.stableThreshold;
     },
 
     /**
@@ -205,7 +209,7 @@ function physicsSimulator(settings) {
         return settings.theta;
       }
     }
-  }
+  };
 
   // allow settings modification via public API:
   expose(settings, publicApi);
