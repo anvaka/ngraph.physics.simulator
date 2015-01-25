@@ -75,6 +75,19 @@ function physicsSimulator(settings) {
     bodies: bodies,
 
     /**
+     * Array of springs, registered with current simulator
+     *
+     * Note: To add new spring, use addSpring() method. This property is only
+     * exposed for testing/performance purposes.
+     */
+    springs: springs,
+
+    /**
+     * Returns settings with which current simulator was initialized
+     */
+    settings: settings,
+
+    /**
      * Performs one step of force simulation.
      *
      * @returns {boolean} true if system is considered stable; False otherwise.
