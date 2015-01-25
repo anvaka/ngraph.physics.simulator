@@ -4,8 +4,16 @@ var test = require('tap').test,
 
 test('Can step without bodies', function (t) {
   var simulator = createSimulator();
-  t.equals(simulator.bodies.length, 0, 'Thee should be no bodies');
+  t.equals(simulator.bodies.length, 0, 'There should be no bodies');
+  t.equals(simulator.springs.length, 0, 'There should be no springs');
   simulator.step(1);
+  t.end();
+});
+
+test('it has settings exposed', function(t) {
+  var mySettings = { };
+  var simulator = createSimulator(mySettings);
+  t.ok(mySettings === simulator.settings, 'settings are exposed');
   t.end();
 });
 
@@ -16,6 +24,7 @@ test('Does not update position of one body', function (t) {
 
   simulator.step(1);
   t.equals(simulator.bodies.length, 1, 'Number of bodies is 1');
+  t.equals(simulator.springs.length, 0, 'Number of springs is 0');
   t.equals(simulator.bodies[0], body, 'Body points to actual object');
   t.equals(body.pos.x, 0, 'X is not changed');
   t.equals(body.pos.y, 0, 'Y is not changed');
@@ -61,7 +70,7 @@ test('Can configure foorces', function (t) {
 
     // Restore original velocity, but now set drag force to 0
     body1.velocity.x = -1;
-    simulator.dragCoeff(0)
+    simulator.dragCoeff(0);
     simulator.step();
     t.ok(body1.velocity.x === -1, 'Velocity should remain unchanged');
     t.end();
@@ -106,6 +115,7 @@ test('add spring should not add bodies', function (t) {
 
   t.equals(simulator.bodies.length, 0, 'Should not add two bodies');
   t.equals(simulator.bodies.length, 0, 'Should not add two bodies');
+  t.equals(simulator.springs.length, 1, 'Should have a spring');
   t.end();
 });
 
