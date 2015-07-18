@@ -239,10 +239,14 @@ function physicsSimulator(settings) {
       quadTree.insertBodies(bodies); // performance: O(n * log n)
       while (i--) {
         body = bodies[i];
-        body.force.reset();
+        // If body is pinned there is no point updating its forces - it should
+        // never move:
+        if (!body.isPinned) {
+          body.force.reset();
 
-        quadTree.updateBodyForce(body);
-        dragForce.update(body);
+          quadTree.updateBodyForce(body);
+          dragForce.update(body);
+        }
       }
     }
 
