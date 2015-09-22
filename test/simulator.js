@@ -6,7 +6,7 @@ test('Can step without bodies', function (t) {
   var simulator = createSimulator();
   t.equals(simulator.bodies.length, 0, 'There should be no bodies');
   t.equals(simulator.springs.length, 0, 'There should be no springs');
-  simulator.step(1);
+  simulator.step();
   t.end();
 });
 
@@ -15,6 +15,40 @@ test('it has settings exposed', function(t) {
   var simulator = createSimulator(mySettings);
   t.ok(mySettings === simulator.settings, 'settings are exposed');
   t.end();
+});
+
+test('it gives amount of total movement', function(t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(-10, 0);
+  var body2 = new physics.Body(10, 0);
+  simulator.addBody(body1);
+  simulator.addBody(body2);
+  simulator.step();
+
+  var totalMoved = simulator.getTotalMovement();
+  t.ok(!isNaN(totalMoved), 'Amount of total movement is returned');
+  t.end();
+});
+
+test('it notifies then system becomes stable', function(t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(-10, 0);
+  var body2 = new physics.Body(10, 0);
+  simulator.addBody(body1);
+  simulator.addBody(body2);
+  // If you take this out, bodies will repel each other:
+  simulator.addSpring(body1, body2, 1);
+  var keepGoing = true;
+
+  simulator.on('stable', function (isStableNow) {
+    t.ok(isStableNow, 'System became stable');
+    keepGoing = false;
+    t.end();
+  })
+
+  while(keepGoing) {
+    simulator.step();
+  }
 });
 
 test('Does not update position of one body', function (t) {
@@ -31,7 +65,7 @@ test('Does not update position of one body', function (t) {
   t.end();
 });
 
-test('Can configure foorces', function (t) {
+test('Can configure forces', function (t) {
   t.test('Gravity', function (t) {
     var simulator = createSimulator();
     var body1 = new physics.Body(0, 0);
@@ -65,7 +99,7 @@ test('Can configure foorces', function (t) {
     simulator.step();
 
     var x1 = body1.velocity.x;
-    // by defauld drag force will slow down entire system:
+    // by default drag force will slow down entire system:
     t.ok(x1 > -1, 'Body 1 moves at reduced speed');
 
     // Restore original velocity, but now set drag force to 0
@@ -84,7 +118,7 @@ test('Can remove bodies', function (t) {
   simulator.addBody(body);
   t.equals(simulator.bodies.length, 1, 'Number of bodies is 1');
   var result = simulator.removeBody(body);
-  t.equals(result, true, 'body succesfully removed');
+  t.equals(result, true, 'body successfully removed');
   t.equals(simulator.bodies.length, 0, 'Number of bodies is 0');
   t.end();
 });
@@ -96,7 +130,7 @@ test('Updates position for two bodies', function (t) {
   simulator.addBody(body1);
   simulator.addBody(body2);
 
-  simulator.step(1);
+  simulator.step();
   t.equals(simulator.bodies.length, 2, 'Number of bodies is 2');
   t.ok(body1.pos.x !== 0, 'Body1.X has changed');
   t.ok(body2.pos.x !== 0, 'Body2.X has changed');
@@ -128,7 +162,7 @@ test('Spring affects bodies positions', function (t) {
   // If you take this out, bodies will repel each other:
   simulator.addSpring(body1, body2, 1);
 
-  simulator.step(1);
+  simulator.step();
 
   t.ok(body1.pos.x > -10, 'Body 1 should move towards body 2');
   t.ok(body2.pos.x < 10, 'Body 2 should move towards body 1');
@@ -145,7 +179,7 @@ test('Can remove springs', function (t) {
   var spring = simulator.addSpring(body1, body2, 1);
   simulator.removeSpring(spring);
 
-  simulator.step(1);
+  simulator.step();
 
   t.ok(body1.pos.x < -10, 'Body 1 should move away from body 2');
   t.ok(body2.pos.x > 10, 'Body 2 should move away from body 1');

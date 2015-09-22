@@ -34,6 +34,12 @@ test('Body gains velocity under force', function (t) {
   t.end();
 });
 
+test('No bodies yield 0 movement', function (t) {
+  var movement = integrate([], 2);
+  t.equals(movement, 0, 'Nothing has moved');
+  t.end();
+});
+
 test('Body does not move faster than 1px', function (t) {
   var body = new physics.Body();
   var timeStep = 1;

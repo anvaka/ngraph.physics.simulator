@@ -7,6 +7,7 @@ function physicsSimulator(settings) {
   var Spring = require('./lib/spring');
   var expose = require('ngraph.expose');
   var merge = require('ngraph.merge');
+  var eventify = require('ngraph.events');
 
   settings = merge(settings, {
       /**
@@ -65,6 +66,9 @@ function physicsSimulator(settings) {
       springForce = createSpringForce(settings),
       dragForce = createDragForce(settings);
 
+  var totalMovement = 0; // how much movement we made on last step
+  var lastStable = false; // indicates whether system was stable on last step() call
+
   var publicApi = {
     /**
      * Array of bodies, registered with current simulator
@@ -94,11 +98,17 @@ function physicsSimulator(settings) {
      */
     step: function () {
       accumulateForces();
-      var totalMovement = integrate(bodies, settings.timeStep);
+      totalMovement = integrate(bodies, settings.timeStep);
 
       bounds.update();
+      var stableNow = totalMovement < settings.stableThreshold;
+      if (lastStable !== stableNow) {
+        publicApi.fire('stable', stableNow);
+      }
 
-      return totalMovement < settings.stableThreshold;
+      lastStable = stableNow;
+
+      return stableNow;
     },
 
     /**
@@ -177,6 +187,13 @@ function physicsSimulator(settings) {
     },
 
     /**
+     * Returns amount of movement performed on last step() call
+     */
+    getTotalMovement: function () {
+      return totalMovement;
+    },
+
+    /**
      * Removes spring from the system
      *
      * @param {Object} spring to remove. Spring is an object returned by addSpring
@@ -226,6 +243,7 @@ function physicsSimulator(settings) {
 
   // allow settings modification via public API:
   expose(settings, publicApi);
+  eventify(publicApi);
 
   return publicApi;
 
