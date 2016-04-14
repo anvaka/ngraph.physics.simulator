@@ -4,7 +4,8 @@
   "description": "Physics library for ngraph",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap test/*.js",
+    "cover": "istanbul cover --dir reports/coverage node_modules/argg test/*.js"
   },
   "keywords": [
     "ngraph"
@@ -24,6 +25,8 @@
     "ngraph.random": "0.0.1"
   },
   "devDependencies": {
+    "argg": "0.0.2",
+    "istanbul": "^0.4.3",
     "tap": "1.4.1"
   }
 }
