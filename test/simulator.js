@@ -30,6 +30,25 @@ test('it gives amount of total movement', function(t) {
   t.end();
 });
 
+test('it can add a body at given position', function(t) {
+  var simulator = createSimulator();
+  var pos1 = {x: -10, y: 0};
+  var pos2 = {x: 10, y: 0};
+  simulator.addBodyAt(pos1);
+  simulator.addBodyAt(pos2);
+
+  t.equals(simulator.bodies.length, 2, 'All bodies are added');
+  var body1 = simulator.bodies[0];
+
+  t.equals(body1.pos.x, -10, 'X is there');
+  t.equals(body1.pos.y, 0, 'Y is there');
+
+  var body2 = simulator.bodies[1];
+  t.equals(body2.pos.x, 10, 'X is there');
+  t.equals(body2.pos.y, 0, 'Y is there');
+  t.end();
+});
+
 test('it notifies then system becomes stable', function(t) {
   var simulator = createSimulator();
   var body1 = new physics.Body(-10, 0);
