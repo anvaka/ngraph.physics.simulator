@@ -19,7 +19,8 @@ var physics = require('ngraph.physics.primitives');
 var body1 = new physics.Body(0, 0);
 var body2 = new physics.Body(1, 0);
 
-var simulator = require('ngraph.physics.simulator');
+var createSimulator = require('ngraph.physics.simulator');
+var simulator = createSimulator();
 simulator.addBody(body1);
 simulator.addBody(body2);
 
