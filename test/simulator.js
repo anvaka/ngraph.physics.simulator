@@ -233,3 +233,44 @@ test('Get best position', function (t) {
 
   t.end();
 });
+
+test('it can change settings', function(t) {
+  var simulator = createSimulator();
+
+  var currentTheta = simulator.theta();
+  t.ok(typeof currentTheta === 'number', 'theta is here');
+  simulator.theta(1.2);
+  t.equals(simulator.theta(), 1.2, 'theta is changed');
+
+  var currentSpringCoeff = simulator.springCoeff();
+  t.ok(typeof currentSpringCoeff === 'number', 'springCoeff is here');
+  simulator.springCoeff(0.8);
+  t.equals(simulator.springCoeff(), 0.8, 'springCoeff is changed');
+
+  var gravity = simulator.gravity();
+  t.ok(typeof gravity === 'number', 'gravity is here');
+  simulator.gravity(-0.8);
+  t.equals(simulator.gravity(), -0.8, 'gravity is changed');
+
+  var springLength = simulator.springLength();
+  t.ok(typeof springLength === 'number', 'springLength is here');
+  simulator.springLength(80);
+  t.equals(simulator.springLength(), 80, 'springLength is changed');
+
+  var dragCoeff = simulator.dragCoeff();
+  t.ok(typeof dragCoeff === 'number', 'dragCoeff is here');
+  simulator.dragCoeff(0.8);
+  t.equals(simulator.dragCoeff(), 0.8, 'dragCoeff is changed');
+
+  var timeStep = simulator.timeStep();
+  t.ok(typeof timeStep === 'number', 'timeStep is here');
+  simulator.timeStep(8);
+  t.equals(simulator.timeStep(), 8, 'timeStep is changed');
+
+  var stableThreshold = simulator.stableThreshold();
+  t.ok(typeof stableThreshold === 'number', 'stableThreshold is here');
+  simulator.stableThreshold(0.008);
+  t.equals(simulator.stableThreshold(), 0.008, 'stableThreshold is changed');
+
+  t.end();
+});
