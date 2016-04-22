@@ -6,7 +6,8 @@ Simulator calculates forces acting on each body and then deduces their position 
 
 1. Spring force keeps connected nodes together via [Hooke's law](http://en.wikipedia.org/wiki/Hooke's_law)
 2. Each body repels each other via [Coulomb's law](http://en.wikipedia.org/wiki/Coulomb's_law)
-3. To guarantee we get to "stable" layout system has kind of a drag force which slows entire simulation down.
+3. To guarantee we get to "stable" state the system has a drag force which slows
+entire simulation down.
 
 Body forces are calculated in `n*lg(n)` time with help of Barnes-Hut algorithm implemented in [quadtree module](https://github.com/anvaka/ngraph.quadtreebh). [Euler method](http://en.wikipedia.org/wiki/Euler_method) is then used to solve ordinary differential equation of Newton's law and get position of bodies.
 

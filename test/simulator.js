@@ -49,27 +49,6 @@ test('it can add a body at given position', function(t) {
   t.end();
 });
 
-test('it notifies then system becomes stable', function(t) {
-  var simulator = createSimulator();
-  var body1 = new physics.Body(-10, 0);
-  var body2 = new physics.Body(10, 0);
-  simulator.addBody(body1);
-  simulator.addBody(body2);
-  // If you take this out, bodies will repel each other:
-  simulator.addSpring(body1, body2, 1);
-  var keepGoing = true;
-
-  simulator.on('stable', function (isStableNow) {
-    t.ok(isStableNow, 'System became stable');
-    keepGoing = false;
-    t.end();
-  })
-
-  while(keepGoing) {
-    simulator.step();
-  }
-});
-
 test('Does not update position of one body', function (t) {
   var simulator = createSimulator();
   var body = new physics.Body(0, 0);
@@ -266,11 +245,6 @@ test('it can change settings', function(t) {
   t.ok(typeof timeStep === 'number', 'timeStep is here');
   simulator.timeStep(8);
   t.equals(simulator.timeStep(), 8, 'timeStep is changed');
-
-  var stableThreshold = simulator.stableThreshold();
-  t.ok(typeof stableThreshold === 'number', 'stableThreshold is here');
-  simulator.stableThreshold(0.008);
-  t.equals(simulator.stableThreshold(), 0.008, 'stableThreshold is changed');
 
   t.end();
 });

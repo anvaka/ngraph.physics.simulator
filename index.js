@@ -44,11 +44,6 @@ function physicsSimulator(settings) {
        * Default time step (dt) for forces integration
        */
       timeStep : 20,
-
-      /**
-        * Maximum movement of the system which can be considered as stabilized
-        */
-      stableThreshold: 0.009
   });
 
   // We allow clients to override basic factory methods:
@@ -67,7 +62,6 @@ function physicsSimulator(settings) {
       dragForce = createDragForce(settings);
 
   var totalMovement = 0; // how much movement we made on last step
-  var lastStable = false; // indicates whether system was stable on last step() call
 
   var publicApi = {
     /**
@@ -77,6 +71,8 @@ function physicsSimulator(settings) {
      * exposed for testing/performance purposes.
      */
     bodies: bodies,
+
+    quadTree: quadTree,
 
     /**
      * Array of springs, registered with current simulator
@@ -98,17 +94,11 @@ function physicsSimulator(settings) {
      */
     step: function () {
       accumulateForces();
-      totalMovement = integrate(bodies, settings.timeStep);
 
+      var movement = integrate(bodies, settings.timeStep);
       bounds.update();
-      var stableNow = totalMovement < settings.stableThreshold;
-      if (lastStable !== stableNow) {
-        publicApi.fire('stable', stableNow);
-      }
 
-      lastStable = stableNow;
-
-      return stableNow;
+      return movement;
     },
 
     /**
@@ -243,6 +233,7 @@ function physicsSimulator(settings) {
 
   // allow settings modification via public API:
   expose(settings, publicApi);
+
   eventify(publicApi);
 
   return publicApi;
