@@ -21,7 +21,7 @@
     "ngraph.expose": "0.0.0",
     "ngraph.merge": "0.0.1",
     "ngraph.physics.primitives": "0.0.7",
-    "ngraph.quadtreebh": "0.0.3",
+    "ngraph.quadtreebh": "0.0.4",
     "ngraph.random": "0.0.1"
   },
   "devDependencies": {
