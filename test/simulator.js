@@ -200,6 +200,30 @@ test('Get bounding box', function (t) {
   t.end();
 });
 
+test('it updates bounding box', function (t) {
+  var simulator = createSimulator();
+  var body1 = new physics.Body(0, 0);
+  var body2 = new physics.Body(10, 10);
+  simulator.addBody(body1);
+  simulator.addBody(body2);
+  var bbox = simulator.getBBox();
+
+  t.ok(bbox.x1 === 0, 'Left is 0');
+  t.ok(bbox.y1 === 0, 'Top is 0');
+  t.ok(bbox.x2 === 10, 'right is 10');
+  t.ok(bbox.y2 === 10, 'bottom is 10');
+
+  body1.setPosition(15, 15);
+  simulator.invalidateBBox();
+  bbox = simulator.getBBox();
+
+  t.ok(bbox.x1 === 10, 'Left is 10');
+  t.ok(bbox.y1 === 10, 'Top is 10');
+  t.ok(bbox.x2 === 15, 'right is 15');
+  t.ok(bbox.y2 === 15, 'bottom is 15');
+  t.end();
+});
+
 test('Get best position', function (t) {
   t.test('can get with empty simulator', function (t) {
     var simulator = createSimulator();

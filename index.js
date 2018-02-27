@@ -61,6 +61,7 @@ function physicsSimulator(settings) {
       springForce = createSpringForce(settings),
       dragForce = createDragForce(settings);
 
+  var bboxNeedsUpdate = true;
   var totalMovement = 0; // how much movement we made on last step
 
   var publicApi = {
@@ -207,7 +208,15 @@ function physicsSimulator(settings) {
      * Returns bounding box which covers all bodies
      */
     getBBox: function () {
+      if (bboxNeedsUpdate) {
+        bounds.update();
+        bboxNeedsUpdate = false;
+      }
       return bounds.box;
+    },
+
+    invalidateBBox() {
+      bboxNeedsUpdate = true;
     },
 
     gravity: function (value) {
