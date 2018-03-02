@@ -215,7 +215,7 @@ function physicsSimulator(settings) {
       return bounds.box;
     },
 
-    invalidateBBox() {
+    invalidateBBox: function () {
       bboxNeedsUpdate = true;
     },
 
