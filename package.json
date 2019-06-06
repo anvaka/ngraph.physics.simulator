@@ -1,11 +1,10 @@
 {
   "name": "ngraph.physics.simulator",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Physics library for ngraph",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js",
-    "cover": "istanbul cover --dir reports/coverage node_modules/argg test/*.js"
+    "test": "tap test/*.js"
   },
   "keywords": [
     "ngraph"
@@ -17,16 +16,14 @@
     "url": "https://github.com/anvaka/ngraph.physics.simulator"
   },
   "dependencies": {
-    "ngraph.events": "0.0.3",
-    "ngraph.expose": "0.0.0",
-    "ngraph.merge": "0.0.1",
-    "ngraph.physics.primitives": "0.0.7",
-    "ngraph.quadtreebh": "0.0.4",
-    "ngraph.random": "0.0.1"
+    "ngraph.events": "^1.0.0",
+    "ngraph.expose": "^1.0.0",
+    "ngraph.merge": "^1.0.0",
+    "ngraph.physics.primitives": "^1.0.0",
+    "ngraph.quadtreebh": "^1.0.0",
+    "ngraph.random": "^1.0.0"
   },
   "devDependencies": {
-    "argg": "0.0.2",
-    "istanbul": "^0.4.3",
-    "tap": "1.4.1"
+    "tap": "^14.2.2"
   }
 }
