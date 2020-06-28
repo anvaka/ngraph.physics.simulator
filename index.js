@@ -161,7 +161,7 @@ function physicsSimulator(settings) {
      * @returns {Object} - a handle for a spring. If you want to later remove
      * spring pass it to removeSpring() method.
      */
-    addSpring: function (body1, body2, springLength, springWeight, springCoefficient) {
+    addSpring: function (body1, body2, springLength, springCoefficient) {
       if (!body1 || !body2) {
         throw new Error('Cannot add null spring to force simulator');
       }
@@ -170,7 +170,7 @@ function physicsSimulator(settings) {
         springLength = -1; // assume global configuration
       }
 
-      var spring = new Spring(body1, body2, springLength, springCoefficient >= 0 ? springCoefficient : -1, springWeight);
+      var spring = new Spring(body1, body2, springLength, springCoefficient >= 0 ? springCoefficient : -1);
       springs.push(spring);
 
       // TODO: could mark simulator as dirty.
