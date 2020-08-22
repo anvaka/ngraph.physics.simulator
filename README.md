@@ -1,6 +1,15 @@
 # Physics for ngraph
 
-This is a physics module for [ngraph](https://github.com/anvaka/ngraph). Its primary focus is to serve force based graph layout, thus it manages a naïve system of bodies and springs. 
+This was a physics module for [ngraph.forcelayout](https://github.com/anvaka/ngraph.forcelayout). 
+
+With time this module was merged into `ngraph.forcelayout` and this package is no
+longer used.
+
+Below is the rest of the readme file, kept for historical reasons.
+
+## Old readme
+
+The module's primary focus is to serve force based graph layout, thus it manages a naïve system of bodies and springs. 
 
 Simulator calculates forces acting on each body and then deduces their position via Newton's law. There are three major forces in the system:
 
